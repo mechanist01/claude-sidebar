@@ -2,7 +2,7 @@
 
 ClaudIA is a Chrome extension that provides convenient access to Claude AI through a sidebar interface, allowing you to chat with Claude while browsing the web.
 
-![ClaudIA Screenshot Placeholder](/screenshot.png)
+![ClaudIA Screenshot Placeholder]([/screenshot.png)](https://i.ibb.co/vdVj3cy/screenshot.png)
 
 ## Features
 
@@ -87,7 +87,7 @@ Your Claude API key is stored locally in Chrome's secure storage and is never sh
 
 ### Project Structure
 ```
-copyclaudia-extension/
+claudia-extension/
 ├── manifest.json
 ├── background.js
 ├── styles/
@@ -206,22 +206,6 @@ try {
 }
 ```
 
-### Rate Limiting
-
-The extension includes a rate limiter to manage API requests:
-```javascript
-class RateLimiter {
-  constructor(maxRequests = 5, timeWindow = 60000) {
-    this.requests = [];
-    this.maxRequests = maxRequests;
-    this.timeWindow = timeWindow;
-  }
-
-  async waitForAvailableSlot() {
-    // Implements token bucket algorithm
-  }
-}
-```
 
 ## Contributing
 
