@@ -81,7 +81,6 @@ Your Claude API key is stored locally in Chrome's secure storage and is never sh
 
 - "Invalid API key": Double-check your API key in the settings
 - "Failed to send message": Check your internet connection
-- "Rate limit exceeded": Wait a few minutes and try again
 
 ## Technical Architecture
 
@@ -110,7 +109,6 @@ claudia-extension/
 #### ApiService (apiService.js)
 - Handles all Claude API interactions
 - Manages API key validation and storage
-- Implements rate limiting and retry logic
 - Formats messages for API calls
 
 Key methods:
