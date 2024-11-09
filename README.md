@@ -97,7 +97,7 @@ claudia-extension/
 │   ├── chatManager.js  # Conversation management
 │   ├── uiManager.js    # UI updates and events
 │   └── sidepanel.js    # Main orchestration
-├── icons/
+├── images/
 │   ├── icon16.png
 │   ├── icon48.png
 │   └── icon128.png
