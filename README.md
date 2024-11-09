@@ -2,16 +2,15 @@
 
 ClaudIA is a Chrome extension that provides convenient access to Claude AI through a sidebar interface, allowing you to chat with Claude while browsing the web.
 
-![ClaudIA Screenshot Placeholder](/path/to/screenshot.png)
+![ClaudIA Screenshot Placeholder](/screenshot.png)
 
 ## Features
 
-- 🔄 Persistent chat history
 - 💬 Easy-to-use sidebar interface
 - 🔐 Secure API key storage
 - 📱 Responsive design
 - 🎨 Clean, modern UI
-- ⚡ Quick access to previous conversations
+- ⚡ Fast response times
 
 ## Installation
 
@@ -53,10 +52,8 @@ ClaudIA is a Chrome extension that provides convenient access to Claude AI throu
    - Press Enter or click the send button
    - Claude will respond in the chat window
 
-3. **Managing Conversations**
-   - Click the chat history icon to view previous conversations
-   - Start a new chat by clicking the "+" icon
-   - Delete conversations by clicking the trash icon in the chat list
+3. **Starting a New Chat**
+   - Click the "+" icon to start a fresh conversation
 
 ## Security Note
 
@@ -86,26 +83,145 @@ Your Claude API key is stored locally in Chrome's secure storage and is never sh
 - "Failed to send message": Check your internet connection
 - "Rate limit exceeded": Wait a few minutes and try again
 
-## Development
+## Technical Architecture
 
 ### Project Structure
-
 ```
 copyclaudia-extension/
-├── manifest.json           # Extension configuration
-├── background.js          # Background service worker
-├── styles/               # CSS styles
-├── scripts/              # JavaScript modules
-├── icons/               # Extension icons
-└── sidepanel.html       # Main sidebar interface
+├── manifest.json
+├── background.js
+├── styles/
+│   ├── main.css        # Base styles and variables
+│   └── chat.css        # Chat interface styles
+├── scripts/
+│   ├── apiService.js   # Claude API interactions
+│   ├── chatManager.js  # Conversation management
+│   ├── uiManager.js    # UI updates and events
+│   └── sidepanel.js    # Main orchestration
+├── icons/
+│   ├── icon16.png
+│   ├── icon48.png
+│   └── icon128.png
+└── sidepanel.html
 ```
 
-### Local Development
+### Core Components
 
-1. Make changes to the code
-2. Go to `chrome://extensions/`
-3. Click the refresh icon on the extension card
-4. Test your changes
+#### ApiService (apiService.js)
+- Handles all Claude API interactions
+- Manages API key validation and storage
+- Implements rate limiting and retry logic
+- Formats messages for API calls
+
+Key methods:
+- `initialize()` - Set up API service
+- `validateApiKey(apiKey)` - Test API key validity
+- `sendMessage(message)` - Send message to Claude API
+- `cleanMessages(messages)` - Format messages for API
+
+#### ChatManager (chatManager.js)
+- Manages conversation state
+- Handles conversation storage and retrieval
+- Manages state management
+
+Key methods:
+- `initialize()` - Set up chat manager
+- `createNewConversation()` - Start new chat
+- `addMessage(role, content)` - Add message to current chat
+- `saveCurrentState()` - Save chat to storage
+
+#### UIManager (uiManager.js)
+- Manages UI updates and animations
+- Handles user input
+- Shows loading states and errors
+- Manages settings modal
+
+Key methods:
+- `initialize()` - Set up UI manager
+- `handleSend()` - Process message sending
+- `addMessage(role, content)` - Add message to display
+- `showLoading()` - Show typing indicator
+- `showError(message)` - Display error message
+- `toggleSettings()` - Show/hide settings
+
+#### SidePanel (sidepanel.js)
+- Orchestrates all components
+- Manages initialization flow
+- Handles global error catching
+- Coordinates component interactions
+
+Key methods:
+- `initialize()` - Set up side panel
+- `handleSendMessage()` - Process message sending
+- `handleNewChat()` - Create new chat
+- `saveSettings()` - Save API key
+
+### Data Flow
+
+#### Message Flow
+```
+User Input -> UIManager.handleSend() 
+  -> ApiService.sendMessage() 
+    -> ChatManager.addMessage()
+```
+
+#### Storage Structure
+```javascript
+{
+  apiKey: "string",
+  currentChat: {
+    messages: [{
+      role: "user" | "assistant",
+      content: string,
+      timestamp: string
+    }]
+  }
+}
+```
+
+### Error Handling
+
+The extension implements robust error handling for various scenarios:
+
+#### API Errors
+```javascript
+try {
+  const response = await makeAnthropicRequest();
+} catch (error) {
+  if (error.type === 'rate_limit_error') {
+    // Implements exponential backoff
+  } else if (error.type === 'authentication_error') {
+    // Prompts for new API key
+  }
+}
+```
+
+#### Storage Errors
+```javascript
+try {
+  await chrome.storage.local.set(data);
+} catch (error) {
+  // Handles quota exceeded
+  await cleanupOldConversations();
+}
+```
+
+### Rate Limiting
+
+The extension includes a rate limiter to manage API requests:
+```javascript
+class RateLimiter {
+  constructor(maxRequests = 5, timeWindow = 60000) {
+    this.requests = [];
+    this.maxRequests = maxRequests;
+    this.timeWindow = timeWindow;
+  }
+
+  async waitForAvailableSlot() {
+    // Implements token bucket algorithm
+  }
+}
+```
 
 ## Contributing
 
@@ -120,7 +236,7 @@ copyclaudia-extension/
 
 ## Support
 
-For support, please open an issue on GitHub or contact [your-contact-info].
+For support, please open an issue on GitHub.
 
 ---
 
