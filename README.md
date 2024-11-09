@@ -222,4 +222,4 @@ For support, please open an issue on GitHub.
 
 ---
 
-Made with ❤️ by [Your Name/Organization]
+Made with ❤️ by Ryan Register & Claude Sonnet, sampling by gpt4o 
