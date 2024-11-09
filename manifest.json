@@ -1,0 +1,35 @@
+{
+    "manifest_version": 3,
+    "name": "ClaudIA",
+    "version": "1.0",
+    "description": "Chat with Claude in your browser's side panel",
+    "permissions": [
+      "sidePanel",
+      "storage",
+      "activeTab",
+      "notifications"
+    ],
+    "host_permissions": [
+        "https://api.anthropic.com/*"
+    ],
+    "background": {
+      "service_worker": "background.js",
+      "type": "module"
+    },
+    "side_panel": {
+      "default_path": "sidepanel.html"
+    },
+    "action": {
+      "default_title": "Open ClaudIA",
+      "default_icon": {
+        "16": "images/icon16.png",
+        "48": "images/icon48.png",
+        "128": "images/icon128.png"
+      }
+    },
+    "images": {
+      "16": "images/icon16.png",
+      "48": "images/icon48.png",
+      "128": "images/icon128.png"
+    }
+  }
