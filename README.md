@@ -2,7 +2,7 @@
 
 ClaudIA is a Chrome extension that provides convenient access to Claude AI through a sidebar interface, allowing you to chat with Claude while browsing the web.
 
-![ClaudIA Screenshot Placeholder]([/screenshot.png)](https://i.ibb.co/vdVj3cy/screenshot.png)
+![ClaudIA Screenshot Placeholder](https://i.ibb.co/vdVj3cy/screenshot.png)]
 
 ## Features
 
