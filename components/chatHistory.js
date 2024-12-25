@@ -13,12 +13,7 @@ class ChatHistory {
     this.sidebar.innerHTML = `
       <div class="chat-history-header">
         <h2>Chat History</h2>
-        <button class="close-history-btn" title="Close history">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
+        <button class="close-btn" title="Close history">&times;</button>
       </div>
       <div class="chat-history-list"></div>
     `;
@@ -48,7 +43,7 @@ class ChatHistory {
     this.menuButton.addEventListener('click', () => this.toggleSidebar());
     
     // Close button
-    this.sidebar.querySelector('.close-history-btn').addEventListener('click', () => 
+    this.sidebar.querySelector('.close-btn').addEventListener('click', () => 
       this.toggleSidebar(false)
     );
 
@@ -157,12 +152,14 @@ class ChatHistory {
           </div>
           <div class="chat-url">${chat.websiteInfo?.url || ''}</div>
         </div>
-        <button class="delete-chat-btn" title="Delete chat">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 6h18"></path>
-            <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
-          </svg>
-        </button>
+        ${chat.id !== activeId ? `
+          <button class="delete-chat-btn" title="Delete chat">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 6h18"></path>
+              <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
+            </svg>
+          </button>
+        ` : ''}
         ${chat.id === activeId ? '<div class="active-indicator"></div>' : ''}
       </div>
     `).join('');

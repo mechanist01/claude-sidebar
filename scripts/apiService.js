@@ -53,7 +53,8 @@ class ApiService {
           apiKey: this.apiKey,
           model: this.model,
           messages: cleanedMessages,
-          isFirstMessage: !this.hasFirstMessageBeenSent
+          isFirstMessage: !this.hasFirstMessageBeenSent,
+          conversationId: conversationId
         });
   
         this.hasFirstMessageBeenSent = true;

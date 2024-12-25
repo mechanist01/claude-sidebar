@@ -1,89 +1,109 @@
 // background.js
 chrome.runtime.onInstalled.addListener(() => {
     chrome.sidePanel.setOptions({
-      enabled: true,
-      path: 'sidepanel.html'
+        enabled: true,
+        path: 'sidepanel.html'
     });
 });
-  
+
 chrome.action.onClicked.addListener((tab) => {
     chrome.sidePanel.open({ windowId: tab.windowId });
 });
 
+// Track active tab info
+let currentTabInfo = {
+    url: '',
+    conversationId: null,
+    isFirstMessage: true  // Add flag to track first message
+};
+
+// Listen for tab URL changes
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (changeInfo.url && tab.active) {
+        handlePageChange(tab);
+    }
+});
+
+// Listen for tab activation changes
+chrome.tabs.onActivated.addListener(async (activeInfo) => {
+    const tab = await chrome.tabs.get(activeInfo.tabId);
+    handlePageChange(tab);
+});
+
+function handlePageChange(tab) {
+    // Don't notify for non-HTTP URLs or same URL
+    if (!tab.url.startsWith('http') || tab.url === currentTabInfo.url) {
+        return;
+    }
+
+    try {
+        // Reset first message flag when page changes
+        currentTabInfo.isFirstMessage = true;
+
+        // Broadcast to all open sidepanels
+        chrome.runtime.sendMessage({
+            type: 'NEW_PAGE_DETECTED',
+            url: tab.url,
+            title: tab.title
+        }).catch(error => {
+            // Ignore errors about receiving end not existing
+            if (!error.message.includes('Receiving end does not exist')) {
+                console.error('Error sending page change message:', error);
+            }
+        });
+
+        // Update current tab info
+        currentTabInfo.url = tab.url;
+
+    } catch (error) {
+        console.error('Error handling page change:', error);
+    }
+}
+
 async function getActiveTabContent() {
     try {
-        // Get the active tab
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
         if (!tab) return null;
 
-        // Execute script to get page content
         const [{ result }] = await chrome.scripting.executeScript({
             target: { tabId: tab.id },
             function: () => {
                 function extractMainContent() {
-                    // Try to find the main content using common selectors
                     const selectors = [
-                        'main',                    // Semantic main content
-                        'article',                 // Article content
-                        '[role="main"]',          // ARIA main content
-                        '#content',               // Common content IDs
-                        '#main-content',
-                        '#mainContent',
-                        '.content',               // Common content classes
-                        '.main-content',
-                        '.article-content',
-                        '.post-content',
-                        '.entry-content',
-                        '.page-content'
+                        'main', 'article', '[role="main"]',
+                        '#content', '#main-content', '#mainContent',
+                        '.content', '.main-content', '.article-content',
+                        '.post-content', '.entry-content', '.page-content'
                     ];
 
-                    // Elements to remove
                     const removeSelectors = [
-                        'script',
-                        'style',
-                        'noscript',
-                        'nav',
-                        'header:not(article header)', // Keep article headers
-                        'footer',
-                        '.ad',
-                        '.ads',
-                        '.advertisement',
-                        '.social-share',
-                        '.comments',
-                        '.sidebar',
-                        '.navigation',
-                        '.menu',
-                        '.cookie-notice',
-                        'iframe',
-                        '[aria-hidden="true"]',
-                        '[role="complementary"]',
+                        'script', 'style', 'noscript', 'nav',
+                        'header:not(article header)', 'footer',
+                        '.ad', '.ads', '.advertisement', '.social-share',
+                        '.comments', '.sidebar', '.navigation', '.menu',
+                        '.cookie-notice', 'iframe',
+                        '[aria-hidden="true"]', '[role="complementary"]',
                         '.modal'
                     ];
 
                     let mainContent = '';
                     
-                    // Try each selector until we find content
                     for (const selector of selectors) {
                         const element = document.querySelector(selector);
                         if (element) {
-                            // Clone to avoid modifying the actual page
                             const clone = element.cloneNode(true);
-                            
-                            // Remove unwanted elements from clone
                             removeSelectors.forEach(sel => {
                                 clone.querySelectorAll(sel).forEach(el => el.remove());
                             });
                             
-                            // Get text and clean up whitespace
                             mainContent = clone.innerText
-                                .replace(/(\n\s*){3,}/g, '\n\n')  // Replace multiple newlines
+                                .replace(/(\n\s*){3,}/g, '\n\n')
                                 .trim();
                             
-                            if (mainContent.length > 100) break; // Found substantial content
+                            if (mainContent.length > 100) break;
                         }
                     }
 
-                    // Fallback to body if no content found or content too short
                     if (!mainContent || mainContent.length < 100) {
                         const body = document.body.cloneNode(true);
                         removeSelectors.forEach(sel => {
@@ -111,39 +131,23 @@ async function getActiveTabContent() {
         return null;
     }
 }
-  
+
 async function makeAnthropicRequest(endpoint, options) {
     try {
-        console.log('Making Anthropic request:', {
-            endpoint,
-            method: options.method,
-            model: JSON.parse(options.body).model,
-            apiKeyLength: options.apiKey?.length
-        });
-        
         const headers = {
             'Content-Type': 'application/json',
             'x-api-key': options.apiKey,
             'anthropic-version': '2023-06-01',
-            'anthropic-dangerous-direct-browser-access': 'true'  // Required header for browser requests
+            'anthropic-dangerous-direct-browser-access': 'true'
         };
-
-        console.log('Request headers:', Object.keys(headers));
         
         const response = await fetch(`https://api.anthropic.com/v1/${endpoint}`, {
             ...options,
             headers: headers
         });
-
-        console.log('API Response status:', response.status);
         
         if (!response.ok) {
             const error = await response.json();
-            console.error('API error response:', {
-                status: response.status,
-                statusText: response.statusText,
-                error: error
-            });
             throw new Error(error.error?.message || 'API request failed');
         }
 
@@ -153,29 +157,35 @@ async function makeAnthropicRequest(endpoint, options) {
         throw error;
     }
 }
-  
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     (async () => {
         try {
             if (request.type === 'SEND_MESSAGE') {
-                console.log('Received message request:', {
-                    type: request.type,
-                    model: request.model,
-                    apiKeyLength: request.apiKey?.length,
-                    messageCount: request.messages?.length
-                });
-
                 // If it's the first message, get webpage content
-                if (request.isFirstMessage) {
+                if (currentTabInfo.isFirstMessage) {
                     const pageContent = await getActiveTabContent();
                     if (pageContent) {
-                        const contextMessage = {
+                        // Store website info in conversation metadata
+                        await chrome.storage.local.set({
+                            [`websiteInfo_${request.conversationId}`]: {
+                                title: pageContent.title,
+                                url: pageContent.url
+                            }
+                        });
+                        
+                        // Add context message at the beginning
+                        request.messages.unshift({
                             role: 'user',
                             content: `Current webpage context:\nURL: ${pageContent.url}\nTitle: ${pageContent.title}\n\nPage content:\n${pageContent.content}`
-                        };
-                        request.messages.unshift(contextMessage);
+                        });
                     }
+                    // Set first message flag to false after adding context
+                    currentTabInfo.isFirstMessage = false;
                 }
+
+                // Update conversation ID
+                currentTabInfo.conversationId = request.conversationId;
                 
                 try {
                     const response = await makeAnthropicRequest('messages', {
@@ -201,12 +211,17 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                         errorMessage = 'Too many requests. Please wait a moment and try again.';
                     }
                     
-                    console.error('Send message error:', error);
                     sendResponse({ 
                         content: null, 
                         error: errorMessage
                     });
                 }
+            } else if (request.type === 'UPDATE_CONVERSATION_ID') {
+                currentTabInfo.conversationId = request.conversationId;
+                sendResponse({ success: true });
+            } else if (request.type === 'RESET_FIRST_MESSAGE') {
+                currentTabInfo.isFirstMessage = true;
+                sendResponse({ success: true });
             } else {
                 sendResponse({ error: 'Unknown request type' });
             }

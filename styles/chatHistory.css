@@ -1,4 +1,3 @@
-/* Chat history styles */
 .chat-history-sidebar {
   position: fixed;
   top: 0;
@@ -27,14 +26,35 @@
 
 .chat-history-header h2 {
   margin: 0;
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 500;
+}
+
+.chat-history-header .close-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: var(--spacing-xs);
+  font-size: 1.5rem;
+  line-height: 1;
+  transition: var(--transition);
+}
+
+.chat-history-header .close-btn:hover {
+  color: var(--text-primary);
 }
 
 .chat-history-list {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: overlay;
   padding: var(--spacing-sm);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.chat-history-list::-webkit-scrollbar {
+  display: none;
 }
 
 .chat-history-item {
@@ -112,7 +132,6 @@
   font-size: 0.875rem;
 }
 
-/* Adjust main container when sidebar is open */
 .app-container.sidebar-open {
   padding-left: 300px;
 }

@@ -143,6 +143,6 @@ class UIManager {
     scrollToBottom() {
       this.chatOutput.scrollTop = this.chatOutput.scrollHeight;
     }
-  }
+}
   
-  window.uiManager = new UIManager();
+window.uiManager = new UIManager();

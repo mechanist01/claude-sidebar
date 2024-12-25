@@ -86,11 +86,19 @@ class ChatManager {
     async getConversationList() {
       try {
         const { conversations = {} } = await chrome.storage.local.get('conversations');
-        return Object.entries(conversations).map(([id, data]) => ({
-          id,
-          lastUpdated: data.lastUpdated,
-          preview: data.messages[data.messages.length - 1]?.content.substring(0, 50) + '...'
-        }));
+        const list = [];
+        
+        for (const [id, data] of Object.entries(conversations)) {
+          // Get website info for this conversation
+          const { [`websiteInfo_${id}`]: websiteInfo } = await chrome.storage.local.get(`websiteInfo_${id}`);
+          list.push({
+            id,
+            lastUpdated: data.lastUpdated,
+            preview: data.messages[data.messages.length - 1]?.content.substring(0, 50) + '...',
+            websiteInfo
+          });
+        }
+        return list;
       } catch (error) {
         console.error('Error getting conversation list:', error);
         return [];
@@ -109,6 +117,9 @@ class ChatManager {
         const { conversations = {} } = await chrome.storage.local.get('conversations');
         delete conversations[conversationId];
         await chrome.storage.local.set({ conversations });
+        
+        // Also remove website info
+        await chrome.storage.local.remove(`websiteInfo_${conversationId}`);
   
         if (conversationId === this.currentConversationId) {
           await this.createNewConversation();

@@ -13,7 +13,13 @@ class SidePanel {
       userInput: document.getElementById('user-input'),
       sendButton: document.getElementById('send-btn'),
       newChatButton: document.getElementById('new-chat-btn'),
-      settingsButton: document.getElementById('settings-btn')
+      settingsButton: document.getElementById('settings-btn'),
+      // Add new page modal elements
+      newPageModal: document.getElementById('new-page-modal'),
+      startNewChatBtn: document.getElementById('start-new-chat'),
+      continueChatBtn: document.getElementById('continue-current'),
+      closeNewPageBtn: document.getElementById('close-new-page'),
+      webpageTitle: document.querySelector('#new-page-modal .webpage-title')
     };
     
     this.bindEventListeners();
@@ -36,6 +42,26 @@ class SidePanel {
     // Settings
     this.elements.settingsButton.addEventListener('click', () => {
       window.settings.showModal();
+    });
+
+    // New page modal handlers
+    this.elements.startNewChatBtn.addEventListener('click', () => {
+      this.hideNewPageModal();
+      this.handleNewChat();
+    });
+    this.elements.continueChatBtn.addEventListener('click', () => {
+      this.hideNewPageModal();
+    });
+    this.elements.closeNewPageBtn.addEventListener('click', () => {
+      this.hideNewPageModal();
+    });
+
+    // Listen for page change messages from background script
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      if (request.type === 'NEW_PAGE_DETECTED') {
+        this.showNewPageModal(request.url, request.title);
+      }
+      return true;
     });
 
     // Handle visibility changes
@@ -79,6 +105,23 @@ class SidePanel {
       console.error('Initialization error:', error);
       this.showError('Failed to initialize chat. Please check your API key and try again.');
       window.settings.showModal();
+    }
+  }
+
+  showNewPageModal(url, title) {
+    if (this.elements.newPageModal) {
+      // Update webpage title in modal
+      if (this.elements.webpageTitle) {
+        this.elements.webpageTitle.textContent = title || url;
+      }
+      // Show the modal
+      this.elements.newPageModal.style.display = 'block';
+    }
+  }
+
+  hideNewPageModal() {
+    if (this.elements.newPageModal) {
+      this.elements.newPageModal.style.display = 'none';
     }
   }
 

@@ -10,7 +10,6 @@
 <body>
   <div class="app-container">
     <header class="header">
-      <!-- Chat history button will be inserted here by chatHistory.js -->
       <button id="new-chat-btn" class="icon-btn" title="New Chat">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -44,6 +43,7 @@
       </div>
     </main>
 
+    <!-- Settings Modal -->
     <div id="settings-modal" class="modal">
       <div class="modal-content">
         <div class="modal-header">
@@ -71,11 +71,29 @@
         </div>
       </div>
     </div>
+
+    <!-- New Page Notification Modal -->
+    <div id="new-page-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>New Page Detected</h2>
+          <button id="close-new-page" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>Would you like to start a new chat for this webpage?</p>
+          <p class="webpage-title"></p>
+          <div class="button-group">
+            <button id="start-new-chat" class="primary-btn">Start New Chat</button>
+            <button id="continue-current" class="secondary-btn">Continue Current Chat</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   <script type="module" src="scripts/sidepanel.js"></script>
+  <script type="module" src="scripts/apiService.js"></script>
   <script type="module" src="components/settings.js"></script>
   <script type="module" src="components/chatHistory.js"></script>
-  <script type="module" src="scripts/apiService.js"></script>
   <script type="module" src="scripts/chatManager.js"></script>
   <script type="module" src="scripts/uiManager.js"></script>
 </body>

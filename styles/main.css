@@ -1,5 +1,4 @@
 /* main.css */
-/* Add these updated color variables to main.css */
 :root {
     --bg-primary: #1A1A1A;      /* Darkest background */
     --bg-secondary: #2D2D2D;    /* Message container background */
@@ -119,28 +118,24 @@ body, html {
 .modal {
     display: none;
     position: fixed;
-    top: 0;
+    z-index: 1000;
     left: 0;
+    top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(4px);
 }
 
-.modal.show {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: fadeIn 0.2s ease;
-}
-
 .modal-content {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     background-color: var(--bg-secondary);
-    padding: var(--spacing-lg);
+    width: 90%;
+    max-width: 320px;
     border-radius: 12px;
-    width: 80%;
-    margin: 0 auto;
     border: 1px solid var(--border-color);
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
 }
@@ -149,7 +144,8 @@ body, html {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-md) var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .modal-header h2 {
@@ -157,9 +153,26 @@ body, html {
     font-size: 1.1rem;
     font-weight: 500;
     color: var(--text-primary);
-    letter-spacing: -0.2px;
 }
 
+.modal-body {
+    padding: var(--spacing-md);
+}
+
+.modal-body p {
+    margin: 0 0 var(--spacing-md) 0;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.webpage-title {
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-bottom: var(--spacing-lg);
+    font-size: 0.9rem;
+}
+
+/* Form Elements */
 .form-group {
     margin-bottom: var(--spacing-lg);
 }
@@ -174,33 +187,23 @@ body, html {
 
 .form-group input,
 .form-group select {
-    width: calc(100% - var(--spacing-md) * 2);
-    padding: var(--spacing-sm) var(--spacing-md);
+    width: 100%;
+    padding: var(--spacing-sm);
     background-color: var(--bg-message);
     border: 1px solid var(--border-color);
     border-radius: 6px;
-    font-size: 0.925rem;
     color: var(--text-primary);
-    transition: var(--transition);
-    max-width: 100%;
+    font-size: 0.875rem;
     box-sizing: border-box;
 }
 
-.form-group input:focus,
-.form-group select:focus {
-    outline: none;
-    border-color: var(--bg-user-message);
-    box-shadow: 0 0 0 1px var(--bg-user-message);
-}
-
-.form-group .help-text {
-    display: block;
-    margin-top: var(--spacing-xs);
-    color: var(--text-secondary);
+.help-text {
     font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: var(--spacing-xs);
 }
 
-/* Button group in modal */
+/* Button group */
 .button-group {
     display: flex;
     gap: var(--spacing-sm);
@@ -209,16 +212,17 @@ body, html {
 }
 
 .button-group button {
-    min-width: 80px;
+    min-width: 100px;
 }
 
+/* Close button */
 .close-btn {
     background: none;
     border: none;
     color: var(--text-secondary);
+    font-size: 1.2rem;
     cursor: pointer;
-    padding: var(--spacing-xs);
-    font-size: 1.5rem;
+    padding: 0;
     line-height: 1;
     transition: var(--transition);
 }
@@ -227,11 +231,37 @@ body, html {
     color: var(--text-primary);
 }
 
+/* Button hover states */
+.primary-btn:hover {
+    filter: brightness(1.1);
+}
+
+.secondary-btn:hover {
+    background-color: var(--bg-message);
+}
+
+/* Button active states */
+.primary-btn:active,
+.secondary-btn:active {
+    transform: translateY(1px);
+}
+
+/* Modal animations */
 @keyframes fadeIn {
     from {
         opacity: 0;
+        transform: translate(-50%, -48%);
     }
     to {
         opacity: 1;
+        transform: translate(-50%, -50%);
     }
+}
+
+.modal.show {
+    display: block;
+}
+
+.modal.show .modal-content {
+    animation: fadeIn 0.2s ease-out forwards;
 }
