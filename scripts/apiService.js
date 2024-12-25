@@ -1,13 +1,10 @@
 // apiService.js
-
 class ApiService {
     constructor() {
-        this.claudeApiKey = null;
-        this.gptApiKey = null;
+        this.apiKey = null;
         this.model = 'claude-3-opus-20240229';
     }
   
-    // Clean messages to only include required fields
     cleanMessages(messages) {
         return messages.map(msg => ({
             role: msg.role === 'user' ? 'user' : 'assistant',
@@ -17,16 +14,15 @@ class ApiService {
   
     async initialize() {
       try {
-        const settings = await chrome.storage.local.get(['claudeApiKey', 'gptApiKey', 'model']);
+        console.log('Initializing API Service...');
+        const settings = await chrome.storage.local.get(['apiKey', 'model']);
+        console.log('Retrieved settings:', settings);
         
-        this.claudeApiKey = settings.claudeApiKey;
-        this.gptApiKey = settings.gptApiKey;
+        this.apiKey = settings.apiKey;
         this.model = settings.model || 'claude-3-opus-20240229';
   
-        // Check if we have the required API key for the selected model
-        const requiredKey = this.model.includes('gpt') ? this.gptApiKey : this.claudeApiKey;
-        if (!requiredKey) {
-          throw new Error('Required API key not found');
+        if (!this.apiKey) {
+          throw new Error('Claude API key not found');
         }
   
       } catch (error) {
@@ -36,26 +32,24 @@ class ApiService {
     }
   
     async sendMessage(message, conversationId = null) {
-      if (!this.claudeApiKey && !this.gptApiKey) {
+      if (!this.apiKey) {
         await this.initialize();
       }
   
       try {
+        console.log('Sending message with model:', this.model);
         const messages = await this.getConversationHistory(conversationId);
         messages.push({ 
           role: 'user', 
           content: message 
         });
   
-        // Clean messages before sending
         const cleanedMessages = this.cleanMessages(messages);
   
-        // Use the appropriate API key based on the model
-        const apiKey = this.model.includes('gpt') ? this.gptApiKey : this.claudeApiKey;
-  
+        console.log('Sending to background with apiKey:', this.apiKey ? '(key present)' : '(no key)');
         const response = await chrome.runtime.sendMessage({
           type: 'SEND_MESSAGE',
-          apiKey: apiKey,
+          apiKey: this.apiKey,
           model: this.model,
           messages: cleanedMessages
         });
@@ -117,7 +111,6 @@ class ApiService {
   
         await chrome.storage.local.set({ conversations });
   
-        // Cleanup old conversations if storage is near limit
         await this.cleanupOldConversations(conversations);
   
       } catch (error) {
@@ -128,18 +121,15 @@ class ApiService {
   
     async cleanupOldConversations(conversations) {
       try {
-        // Check storage usage
         const { bytesInUse } = await chrome.storage.local.getBytesInUse();
         const maxBytes = chrome.storage.local.QUOTA_BYTES;
   
-        // If using more than 80% of quota, remove oldest conversations
         if (bytesInUse > maxBytes * 0.8) {
           const conversationList = Object.entries(conversations)
             .sort(([, a], [, b]) => 
               new Date(a.lastUpdated) - new Date(b.lastUpdated)
             );
   
-          // Remove oldest 20% of conversations
           const removeCount = Math.ceil(conversationList.length * 0.2);
           for (let i = 0; i < removeCount; i++) {
             delete conversations[conversationList[i][0]];
@@ -152,33 +142,9 @@ class ApiService {
       }
     }
   
-    // Helper method to format messages for Claude API
-    formatMessages(messages) {
-      return messages.map(msg => ({
-        role: msg.role,
-        content: msg.content
-      }));
-    }
-  
-    // Method to clear API key and reset service
-    async clearApiKey() {
-      try {
-        await chrome.storage.local.remove('apiKey');
-        this.apiKey = null;
-      } catch (error) {
-        console.error('Error clearing API key:', error);
-        throw error;
-      }
-    }
-  
-    // Method to update API key
     async updateApiKey(newApiKey) {
       try {
-        const isValid = await this.validateApiKey(newApiKey);
-        if (!isValid) {
-          throw new Error('Invalid API key');
-        }
-  
+        console.log('Updating API key...');
         await chrome.storage.local.set({ apiKey: newApiKey });
         this.apiKey = newApiKey;
         return true;
@@ -187,12 +153,6 @@ class ApiService {
         throw error;
       }
     }
+}
   
-    updateApiKeys(claudeKey, gptKey) {
-      this.claudeApiKey = claudeKey;
-      this.gptApiKey = gptKey;
-    }
-  }
-  
-  // Create a global instance
-  window.apiService = new ApiService();
+window.apiService = new ApiService();

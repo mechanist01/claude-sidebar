@@ -1,33 +1,47 @@
 // background.js
 chrome.runtime.onInstalled.addListener(() => {
-    // Open the side panel when the extension is installed
     chrome.sidePanel.setOptions({
       enabled: true,
       path: 'sidepanel.html'
     });
   });
   
-  // Handle extension icon click
   chrome.action.onClicked.addListener((tab) => {
     chrome.sidePanel.open({ windowId: tab.windowId });
   });
   
-  // New function to make requests to the Anthropic API
   async function makeAnthropicRequest(endpoint, options) {
     try {
+      console.log('Making Anthropic request:', {
+        endpoint,
+        method: options.method,
+        model: JSON.parse(options.body).model,
+        apiKeyLength: options.apiKey?.length
+      });
+      
+      const headers = {
+        'Content-Type': 'application/json',
+        'x-api-key': options.apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'  // Required header for browser requests
+      };
+
+      console.log('Request headers:', Object.keys(headers));
+      
       const response = await fetch(`https://api.anthropic.com/v1/${endpoint}`, {
         ...options,
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': options.apiKey,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true',
-          ...options.headers
-        }
+        headers: headers
       });
 
+      console.log('API Response status:', response.status);
+      
       if (!response.ok) {
         const error = await response.json();
+        console.error('API error response:', {
+          status: response.status,
+          statusText: response.statusText,
+          error: error
+        });
         throw new Error(error.error?.message || 'API request failed');
       }
 
@@ -38,11 +52,17 @@ chrome.runtime.onInstalled.addListener(() => {
     }
   }
   
-  // Handle messages from content scripts or popup
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     (async () => {
       try {
         if (request.type === 'SEND_MESSAGE') {
+          console.log('Received message request:', {
+            type: request.type,
+            model: request.model,
+            apiKeyLength: request.apiKey?.length,
+            messageCount: request.messages?.length
+          });
+          
           try {
             const response = await makeAnthropicRequest('messages', {
               method: 'POST',
@@ -50,7 +70,7 @@ chrome.runtime.onInstalled.addListener(() => {
               body: JSON.stringify({
                 model: request.model,
                 messages: request.messages,
-                max_tokens: 1048,
+                max_tokens: 4096,
                 temperature: 0.7
               })
             });
@@ -60,7 +80,6 @@ chrome.runtime.onInstalled.addListener(() => {
               error: null 
             });
           } catch (error) {
-            // Handle specific error types
             let errorMessage = error.message;
             if (error.message.includes('authentication')) {
               errorMessage = 'Invalid API key. Please check your key and try again.';
@@ -82,5 +101,5 @@ chrome.runtime.onInstalled.addListener(() => {
         sendResponse({ error: error.message });
       }
     })();
-    return true; // Indicates async response
+    return true;
   });

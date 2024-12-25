@@ -11,9 +11,6 @@ class UIManager {
       this.sendButton = document.getElementById('send-btn');
       this.newChatButton = document.getElementById('new-chat-btn');
       this.settingsButton = document.getElementById('settings-btn');
-      this.apiKeyInput = document.getElementById('api-key');
-      this.saveSettingsButton = document.getElementById('save-settings');
-      this.cancelSettingsButton = document.getElementById('cancel-settings');
       
       this.checkApiKey();
     }
@@ -31,18 +28,12 @@ class UIManager {
       this.settingsButton.addEventListener('click', () => {
         window.settings.showModal();
       });
-      this.saveSettingsButton.addEventListener('click', () => this.saveSettings());
-      this.cancelSettingsButton.addEventListener('click', () => this.hideSettings());
-    }
-  
-    openSettings() {
-      chrome.runtime.openOptionsPage(); // Opens the options page for settings
     }
   
     async checkApiKey() {
       const { apiKey } = await chrome.storage.local.get('apiKey');
       if (!apiKey) {
-        this.showSettings();
+        window.settings.showModal();
       }
     }
   
@@ -152,46 +143,6 @@ class UIManager {
     scrollToBottom() {
       this.chatOutput.scrollTop = this.chatOutput.scrollHeight;
     }
-  
-    showSettings() {
-      this.settingsModal.classList.add('show');
-      this.loadApiKey();
-    }
-  
-    hideSettings() {
-      this.settingsModal.classList.remove('show');
-    }
-  
-    async loadApiKey() {
-      const { apiKey } = await chrome.storage.local.get('apiKey');
-      this.apiKeyInput.value = apiKey || '';
-    }
-  
-    async saveSettings() {
-      const apiKey = this.apiKeyInput.value.trim();
-      
-      if (!apiKey) {
-        this.showError('Please enter an API key');
-        return;
-      }
-  
-      try {
-        // Just save the API key
-        await chrome.storage.local.set({ apiKey });
-        // Update the service
-        window.apiService.apiKey = apiKey;
-        this.hideSettings();
-        
-        // Initialize services
-        await window.apiService.initialize();
-        await window.chatManager.initialize();
-        
-      } catch (error) {
-        console.error('Settings save error:', error);
-        this.showError('Failed to save settings. Please try again.');
-      }
-    }
   }
+  
   window.uiManager = new UIManager();
-  // Create a singleton instance
- 
