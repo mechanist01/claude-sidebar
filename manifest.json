@@ -7,10 +7,13 @@
       "sidePanel",
       "storage",
       "activeTab",
-      "notifications"
+      "notifications",
+      "scripting",
+      "tabs"
     ],
     "host_permissions": [
-        "https://api.anthropic.com/*"
+        "https://api.anthropic.com/*",
+        "<all_urls>"
     ],
     "background": {
       "service_worker": "background.js",
@@ -32,4 +35,4 @@
       "48": "images/icon48.png",
       "128": "images/icon128.png"
     }
-  }
+}

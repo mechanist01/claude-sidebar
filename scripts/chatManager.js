@@ -118,9 +118,6 @@ class ChatManager {
         throw error;
       }
     }
-  }
+}
   
-  // Create a global instance
-  window.chatManager = new ChatManager();
-  // Create a singleton instance
- 
+window.chatManager = new ChatManager();

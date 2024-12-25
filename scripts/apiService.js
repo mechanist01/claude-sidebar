@@ -3,6 +3,7 @@ class ApiService {
     constructor() {
         this.apiKey = null;
         this.model = 'claude-3-opus-20240229';
+        this.hasFirstMessageBeenSent = false;
     }
   
     cleanMessages(messages) {
@@ -51,9 +52,12 @@ class ApiService {
           type: 'SEND_MESSAGE',
           apiKey: this.apiKey,
           model: this.model,
-          messages: cleanedMessages
+          messages: cleanedMessages,
+          isFirstMessage: !this.hasFirstMessageBeenSent
         });
   
+        this.hasFirstMessageBeenSent = true;
+
         if (response.error) {
           throw new Error(response.error);
         }
@@ -152,6 +156,10 @@ class ApiService {
         console.error('Error updating API key:', error);
         throw error;
       }
+    }
+
+    resetFirstMessageFlag() {
+        this.hasFirstMessageBeenSent = false;
     }
 }
   

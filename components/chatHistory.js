@@ -114,6 +114,20 @@ class ChatHistory {
     }
   }
 
+  getDisplayTitle(websiteInfo) {
+    if (!websiteInfo) return 'New Chat';
+    if (websiteInfo.title) return websiteInfo.title;
+    if (websiteInfo.url) {
+      try {
+        const url = new URL(websiteInfo.url);
+        return url.hostname;
+      } catch {
+        return websiteInfo.url;
+      }
+    }
+    return 'New Chat';
+  }
+
   async updateChatList() {
     const listContainer = this.sidebar.querySelector('.chat-history-list');
     const conversations = await chatManager.getConversationList();
@@ -137,8 +151,11 @@ class ChatHistory {
            role="button"
            tabindex="0">
         <div class="chat-preview">
-          <div class="chat-title">${this.formatDate(chat.lastUpdated)}</div>
-          <div class="chat-snippet">${chat.preview || 'Empty chat'}</div>
+          <div class="chat-title">
+            ${this.getDisplayTitle(chat.websiteInfo)}
+            <span class="chat-date">${this.formatDate(chat.lastUpdated)}</span>
+          </div>
+          <div class="chat-url">${chat.websiteInfo?.url || ''}</div>
         </div>
         <button class="delete-chat-btn" title="Delete chat">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

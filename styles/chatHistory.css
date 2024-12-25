@@ -1,110 +1,69 @@
+/* Chat history styles */
 .chat-history-sidebar {
   position: fixed;
   top: 0;
-  left: -280px;
-  width: 280px;
-  height: 100%;
-  background-color: var(--bg-primary);
+  left: -300px;
+  width: 300px;
+  height: 100vh;
+  background-color: var(--bg-secondary);
   border-right: 1px solid var(--border-color);
-  transition: var(--transition);
-  z-index: 1000;
+  transition: left 0.3s ease;
+  z-index: 100;
   display: flex;
   flex-direction: column;
 }
 
 .chat-history-sidebar.open {
   left: 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .chat-history-header {
-  height: 60px;
-  padding: 0 var(--spacing-lg);
+  padding: var(--spacing-md);
   border-bottom: 1px solid var(--border-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--bg-primary);
 }
 
 .chat-history-header h2 {
   margin: 0;
-  font-size: 0.925rem;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.close-history-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: var(--spacing-sm);
-  color: var(--text-secondary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  transition: var(--transition);
-}
-
-.close-history-btn:hover {
-  background-color: var(--bg-message);
-  color: var(--text-primary);
-}
-
-.close-history-btn svg {
-  width: 18px;
-  height: 18px;
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 .chat-history-list {
   flex: 1;
   overflow-y: auto;
-  padding: var(--spacing-md);
-  mask-image: linear-gradient(to top, 
-    rgba(0, 0, 0, 1) 90%, 
-    rgba(0, 0, 0, 0)
-  );
-  -webkit-mask-image: linear-gradient(to top, 
-    rgba(0, 0, 0, 1) 90%, 
-    rgba(0, 0, 0, 0)
-  );
-}
-
-.chat-history-list::-webkit-scrollbar {
-  display: none;
+  padding: var(--spacing-sm);
 }
 
 .chat-history-item {
   padding: var(--spacing-md);
-  border-radius: 8px;
-  margin-bottom: var(--spacing-sm);
+  margin: var(--spacing-xs) 0;
+  border-radius: 6px;
   cursor: pointer;
+  transition: var(--transition);
+  position: relative;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  transition: var(--transition);
-  background-color: var(--bg-message);
-  animation: fadeIn 0.2s ease;
-  position: relative;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
 }
 
 .chat-history-item:hover {
-  background-color: var(--bg-user-message);
+  background-color: var(--bg-message);
 }
 
 .chat-history-item.active {
-  background-color: var(--bg-user-message);
+  background-color: var(--bg-message);
 }
 
 .chat-preview {
   flex: 1;
-  min-width: 0;
-  margin-right: var(--spacing-sm);
+  overflow: hidden;
 }
 
 .chat-title {
-  font-size: 0.875rem;
   font-weight: 500;
   margin-bottom: var(--spacing-xs);
   color: var(--text-primary);
@@ -116,93 +75,44 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  line-height: 1.4;
-  opacity: 0.8;
 }
 
-.active-indicator {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: var(--text-primary);
-  margin-left: var(--spacing-sm);
-  flex-shrink: 0;
-  opacity: 0.6;
-}
-
-/* Delete button */
 .delete-chat-btn {
   background: none;
   border: none;
-  cursor: pointer;
-  padding: var(--spacing-sm);
+  padding: var(--spacing-xxs);
   color: var(--text-secondary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  transition: var(--transition);
   opacity: 0;
-  margin-right: calc(var(--spacing-sm) * -1);
+  transition: var(--transition);
+  cursor: pointer;
 }
 
 .chat-history-item:hover .delete-chat-btn {
-  opacity: 0.8;
+  opacity: 1;
 }
 
 .delete-chat-btn:hover {
-  background-color: rgba(239, 68, 68, 0.1);
-  color: #EF4444;
-  opacity: 1 !important;
-}
-
-/* History button in header */
-#history-btn {
-  position: relative;
-  padding: var(--spacing-sm);
-  background: none;
-  border: none;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: var(--transition);
-  color: var(--text-secondary);
-}
-
-#history-btn:hover {
-  background-color: var(--bg-message);
   color: var(--text-primary);
 }
 
-#history-btn svg {
-  width: 20px;
-  height: 20px;
+.active-indicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background-color: var(--bg-user-message);
+  border-radius: 0 3px 3px 0;
 }
 
-/* Empty state */
 .chat-history-empty {
   padding: var(--spacing-lg);
   text-align: center;
   color: var(--text-secondary);
   font-size: 0.875rem;
-  opacity: 0.8;
 }
 
-/* Mobile responsive styles */
-@media (max-width: 768px) {
-  .chat-history-sidebar {
-    width: 100%;
-    left: -100%;
-  }
-
-  .chat-history-header {
-    height: 56px;
-  }
-
-  .chat-history-item {
-    padding: var(--spacing-sm) var(--spacing-md);
-  }
-  
-  .delete-chat-btn {
-    opacity: 0.8;
-  }
+/* Adjust main container when sidebar is open */
+.app-container.sidebar-open {
+  padding-left: 300px;
 }
