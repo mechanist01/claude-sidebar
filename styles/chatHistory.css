@@ -1,0 +1,208 @@
+.chat-history-sidebar {
+  position: fixed;
+  top: 0;
+  left: -280px;
+  width: 280px;
+  height: 100%;
+  background-color: var(--bg-primary);
+  border-right: 1px solid var(--border-color);
+  transition: var(--transition);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-history-sidebar.open {
+  left: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chat-history-header {
+  height: 60px;
+  padding: 0 var(--spacing-lg);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--bg-primary);
+}
+
+.chat-history-header h2 {
+  margin: 0;
+  font-size: 0.925rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.close-history-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-sm);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: var(--transition);
+}
+
+.close-history-btn:hover {
+  background-color: var(--bg-message);
+  color: var(--text-primary);
+}
+
+.close-history-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.chat-history-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-md);
+  mask-image: linear-gradient(to top, 
+    rgba(0, 0, 0, 1) 90%, 
+    rgba(0, 0, 0, 0)
+  );
+  -webkit-mask-image: linear-gradient(to top, 
+    rgba(0, 0, 0, 1) 90%, 
+    rgba(0, 0, 0, 0)
+  );
+}
+
+.chat-history-list::-webkit-scrollbar {
+  display: none;
+}
+
+.chat-history-item {
+  padding: var(--spacing-md);
+  border-radius: 8px;
+  margin-bottom: var(--spacing-sm);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: var(--transition);
+  background-color: var(--bg-message);
+  animation: fadeIn 0.2s ease;
+  position: relative;
+}
+
+.chat-history-item:hover {
+  background-color: var(--bg-user-message);
+}
+
+.chat-history-item.active {
+  background-color: var(--bg-user-message);
+}
+
+.chat-preview {
+  flex: 1;
+  min-width: 0;
+  margin-right: var(--spacing-sm);
+}
+
+.chat-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: var(--spacing-xs);
+  color: var(--text-primary);
+}
+
+.chat-snippet {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+  opacity: 0.8;
+}
+
+.active-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--text-primary);
+  margin-left: var(--spacing-sm);
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+/* Delete button */
+.delete-chat-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-sm);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: var(--transition);
+  opacity: 0;
+  margin-right: calc(var(--spacing-sm) * -1);
+}
+
+.chat-history-item:hover .delete-chat-btn {
+  opacity: 0.8;
+}
+
+.delete-chat-btn:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #EF4444;
+  opacity: 1 !important;
+}
+
+/* History button in header */
+#history-btn {
+  position: relative;
+  padding: var(--spacing-sm);
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: var(--transition);
+  color: var(--text-secondary);
+}
+
+#history-btn:hover {
+  background-color: var(--bg-message);
+  color: var(--text-primary);
+}
+
+#history-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Empty state */
+.chat-history-empty {
+  padding: var(--spacing-lg);
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  .chat-history-sidebar {
+    width: 100%;
+    left: -100%;
+  }
+
+  .chat-history-header {
+    height: 56px;
+  }
+
+  .chat-history-item {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  
+  .delete-chat-btn {
+    opacity: 0.8;
+  }
+}

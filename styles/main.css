@@ -14,9 +14,9 @@
     --spacing-md: 16px;
     --spacing-lg: 24px;
     --transition: all 0.2s ease;
-  }
-  
-  body, html {
+}
+
+body, html {
     margin: 0;
     padding: 0;
     height: 100%;
@@ -24,49 +24,49 @@
     color: var(--text-primary);
     background-color: var(--bg-primary);
     -webkit-font-smoothing: antialiased;
-  }
-  
-  .app-container {
+}
+
+.app-container {
     display: flex;
     flex-direction: column;
     height: 100vh;
     background-color: var(--bg-primary);
-  }
-  
-  /* Header styles */
-  .header {
+}
+
+/* Header styles */
+.header {
     display: flex;
     align-items: center;
     padding: var(--spacing-sm) var(--spacing-md);
     background-color: var(--bg-primary);
     border-bottom: 1px solid var(--border-color);
     height: 48px;
-  }
-  
-  .header-title {
+}
+
+.header-title {
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: var(--spacing-sm);
-  }
-  
-  .header-logo {
+}
+
+.header-logo {
     width: 24px;
     height: 24px;
     object-fit: contain;
-  }
-  
-  .header h1 {
+}
+
+.header h1 {
     margin: 0;
     font-size: 1rem;
     font-weight: 500;
     color: var(--text-primary);
     letter-spacing: -0.2px;
-  }
-  
-  /* Button styles */
-  .icon-btn {
+}
+
+/* Button styles */
+.icon-btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -79,19 +79,19 @@
     width: 32px;
     height: 32px;
     transition: var(--transition);
-  }
-  
-  .icon-btn:hover {
+}
+
+.icon-btn:hover {
     background-color: var(--bg-message);
     color: var(--text-primary);
-  }
-  
-  .icon-btn svg {
+}
+
+.icon-btn svg {
     width: 20px;
     height: 20px;
-  }
-  
-  .primary-btn {
+}
+
+.primary-btn {
     background-color: var(--bg-user-message);
     color: var(--text-primary);
     border: none;
@@ -101,9 +101,9 @@
     font-weight: 500;
     font-size: 0.875rem;
     transition: var(--transition);
-  }
-  
-  .secondary-btn {
+}
+
+.secondary-btn {
     background-color: transparent;
     color: var(--text-primary);
     border: 1px solid var(--border-color);
@@ -113,10 +113,10 @@
     font-weight: 500;
     font-size: 0.875rem;
     transition: var(--transition);
-  }
-  
-  /* Modal styles */
-  .modal {
+}
+
+/* Modal styles */
+.modal {
     display: none;
     position: fixed;
     top: 0;
@@ -126,54 +126,55 @@
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 1000;
     backdrop-filter: blur(4px);
-  }
-  
-  .modal.show {
+}
+
+.modal.show {
     display: flex;
     align-items: center;
     justify-content: center;
     animation: fadeIn 0.2s ease;
-  }
-  
-  .modal-content {
+}
+
+.modal-content {
     background-color: var(--bg-secondary);
     padding: var(--spacing-lg);
     border-radius: 12px;
-    width: 90%;
-    max-width: 400px;
+    width: 80%;
+    margin: 0 auto;
     border: 1px solid var(--border-color);
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
-  }
-  
-  .modal-header {
+}
+
+.modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--spacing-lg);
-  }
-  
-  .modal-header h2 {
+}
+
+.modal-header h2 {
     margin: 0;
     font-size: 1.1rem;
     font-weight: 500;
     color: var(--text-primary);
     letter-spacing: -0.2px;
-  }
-  
-  .form-group {
+}
+
+.form-group {
     margin-bottom: var(--spacing-lg);
-  }
-  
-  .form-group label {
+}
+
+.form-group label {
     display: block;
     margin-bottom: var(--spacing-xs);
     font-weight: 500;
     color: var(--text-primary);
     font-size: 0.875rem;
-  }
-  
-  .form-group input {
-    width: 100%;
+}
+
+.form-group input,
+.form-group select {
+    width: calc(100% - var(--spacing-md) * 2);
     padding: var(--spacing-sm) var(--spacing-md);
     background-color: var(--bg-message);
     border: 1px solid var(--border-color);
@@ -181,17 +182,56 @@
     font-size: 0.925rem;
     color: var(--text-primary);
     transition: var(--transition);
-  }
-  
-  .form-group input:focus {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
     outline: none;
     border-color: var(--bg-user-message);
     box-shadow: 0 0 0 1px var(--bg-user-message);
-  }
-  
-  .form-group small {
+}
+
+.form-group .help-text {
     display: block;
     margin-top: var(--spacing-xs);
     color: var(--text-secondary);
     font-size: 0.75rem;
-  }
+}
+
+/* Button group in modal */
+.button-group {
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: flex-end;
+    margin-top: var(--spacing-lg);
+}
+
+.button-group button {
+    min-width: 80px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    font-size: 1.5rem;
+    line-height: 1;
+    transition: var(--transition);
+}
+
+.close-btn:hover {
+    color: var(--text-primary);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

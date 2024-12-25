@@ -5,10 +5,12 @@
   <title>ClaudIA</title>
   <link rel="stylesheet" href="styles/main.css">
   <link rel="stylesheet" href="styles/chat.css">
+  <link rel="stylesheet" href="styles/chatHistory.css">
 </head>
 <body>
   <div class="app-container">
     <header class="header">
+      <!-- Chat history button will be inserted here by chatHistory.js -->
       <button id="new-chat-btn" class="icon-btn" title="New Chat">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -72,6 +74,7 @@
   </div>
   <script type="module" src="scripts/sidepanel.js"></script>
   <script type="module" src="components/settings.js"></script>
+  <script type="module" src="components/chatHistory.js"></script>
   <script type="module" src="scripts/apiService.js"></script>
   <script type="module" src="scripts/chatManager.js"></script>
   <script type="module" src="scripts/uiManager.js"></script>
